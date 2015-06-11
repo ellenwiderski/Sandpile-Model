@@ -66,7 +66,7 @@ void dxd(int maxLength) {
 			word = cross(s.first,t.first);
 			dxdfile << word << endl;
 		}
-		cout << it * 100 / size << "%" << endl;
+		cout << it * 100.0 / size << "%" << endl;
 		it++;
 	}
 	dxdfile.close();
@@ -91,7 +91,6 @@ int main(int argc, char** argv) {
 
 	dxd(wordLen);
 
-	vector<string> entries;
 	LCS lcs;
 	srand(time(NULL));
 	string entry1 = "";
