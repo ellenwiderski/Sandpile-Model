@@ -31,10 +31,8 @@ string cross(string one,string two) {
 	return newString;
 }
 
-void dxd(int maxLength) {
-
-	ofstream dxdfile;
-	dxdfile.open("dxd.txt");
+map<string,bool> dxd(int maxLength) {
+	map<string,bool> dictionary;
 
 	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength));
 	string bn = B(bnLength);
@@ -59,70 +57,59 @@ void dxd(int maxLength) {
 	int it = 0;
 
 	int size = temp.size();
-	string word;
 
 	for(pair<string,bool> const &s : temp) {
 		for(pair<string,bool> const &t : temp) {
-			word = cross(s.first,t.first);
-			dxdfile << word << endl;
+			string word = cross(s.first,t.first);
+			dictionary[word] = false;
 		}
 		cout << it * 100 / size << "%" << endl;
 		it++;
 	}
-	dxdfile.close();
+
+	return dictionary;
 }
 
 
 int main(int argc, char** argv) {
 	ofstream myfile;
-	ifstream dxdfile;
 	myfile.open("out.csv");
 
-	int wordLen;
 	int numTests;
+	string fixedWord;
 
-	cout << "Enter a word length:\n";
-	cin >> wordLen;
+	cout << "Enter a word:\n";
+	cin >> fixedWord;
+
+	int wordLen = fixedWord.size();
 
 	cout << "Thanks so much!\nNow enter the number of tests:\n";
 	cin >> numTests;
 
+	myfile << "Word is: " << fixedWord << endl;
 	myfile << "Iteration Number, Distance\n";
 
-	dxd(wordLen);
-
+	map<string,bool> foo = dxd(wordLen);
 	vector<string> entries;
-	LCS lcs;
+	for (pair<string,bool> const &k : foo) {
+		entries.push_back(k.first);
+	}
+
 	srand(time(NULL));
-	string entry1 = "";
-	int rand1;
-	string entry2 = "";
-	int rand2;
-	string line;
+	string entry2;
+
+	LCS lcs;
 
 	cout << "Calculating distances" << endl;
 
 	for (int i = 0; i < numTests; i++) {
-		int it = 0;
-		dxdfile.open("dxd.txt");
-		rand1 = rand() % ((2*wordLen-1)*(2*wordLen-1));
-		rand2 = rand() % ((2*wordLen-1)*(2*wordLen-1));
-
-		while (getline(dxdfile,line)) {
-			if (it == rand1) {
-				entry1 = line;
-			}
-			if (it == rand2) {
-				entry2 = line;
-			}
-			it++;
-		}
-		string s = lcs.Correspondence(entry1, entry2);
-	    myfile << i+1 << ", " << (entry1.size() - s.size()) / (double)entry1.size() << endl;
+		entry2 = entries[(rand() % entries.size())];
+	    string s = lcs.Correspondence(fixedWord, entry2);
+	    //cout << entry2 << endl;
+	    myfile << i+1 << ", " << (wordLen - s.size()) / (double)(wordLen) << endl;
 	    if (i % 5 == 0) {
 		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
 		}
-		dxdfile.close();
 	}
 
 	myfile.close();
