@@ -7,4 +7,5 @@ CPPFLAGS = -std=c++11 -g
 d: GenerateTheD.cpp HammingDistance.o pair.o
 	$(CPP) $(CPPFLAGS) GenerateTheD.cpp HammingDistance.o pair.o -o d
 
-clean: rm *.o
+clean: 
+		rm -f *.o d

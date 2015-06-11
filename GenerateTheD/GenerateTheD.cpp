@@ -25,7 +25,7 @@ string cross(string one,string two) {
 	for (int i = 0; i < one.size(); i++){
 		first = 2 * ((int)(one[i])-48);
 		second = ((int)two[i]-48);
-		newString += to_string(first + second);
+		newString += (first + second);
 	}
 	return newString;
 }
@@ -58,7 +58,7 @@ map<string,bool> dxd(int maxLength) {
 
 
 int main(int argc, char** argv) {
-	map<string,bool> foo = dxd((int)(*argv[1]));
+	map<string,bool> foo = dxd(atoi(argv[1]));
 	vector<string> entries;
 	for (auto const &k : foo) {
 		entries.push_back(k.first);
@@ -68,16 +68,19 @@ int main(int argc, char** argv) {
 	string entry2;
 
 	LCS lcs;
-	float avg = 0.0;
+	double avg = 0.0;
 
-	for (int i = 0; i < (int)(*argv[2]); i++) {
+	for (int i = 0; i < (atoi(argv[2])); i++) {
 		entry1 = entries[(rand() % entries.size())-1];
 		entry2 = entries[(rand() % entries.size())-1];
 	    auto s = lcs.Correspondence(entry1, entry2);
-	    avg += (entry1.size() - s.size()) / (float)entry1.size();
+	    avg += (entry1.size() - s.size()) / (double)entry1.size();
+	    if (i % 100 == 0) {
+		    cout << (double)(i) * 100.0 / atoi(argv[2]) << "%" << endl;
+		}
 	}
 
-	avg = avg / (float)(*argv[2]);
+	avg = avg / (double)(atoi(argv[2]));
 	cout << avg << endl;
 	//cout << entry1.size() - s.size() << "/" << entry1.size() << endl;
 
