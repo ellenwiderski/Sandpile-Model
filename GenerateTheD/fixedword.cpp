@@ -88,6 +88,8 @@ int main(int argc, char** argv) {
 	cout << "Thanks so much!\nNow enter the number of tests:\n";
 	cin >> numTests;
 
+	cout << "Wow! That's such a great number of tests!\n" << endl;
+
 	myfile << "Word is: " << fixedWord << endl;
 	myfile << "Iteration Number, Distance\n";
 
