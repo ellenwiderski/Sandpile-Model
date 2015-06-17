@@ -5,11 +5,11 @@ CPPFLAGS = -std=c++11 -g
 	$(CPP) $(CPPFLAGS) -c $@.cpp
 
 
-fast: maybeFaster.cpp HammingDistance.o pair.o
-	$(CPP) $(CPPFLAGS) maybeFaster.cpp HammingDistance.o pair.o -o fast
+fast: maybeFaster.cpp
+	$(CPP) $(CPPFLAGS) maybeFaster.cpp -o fast
 
-fixed: fixedword.cpp HammingDistance.o pair.o
-	$(CPP) $(CPPFLAGS) fixedword.cpp HammingDistance.o pair.o -o fixed
+fixed: fixedword.cpp
+	$(CPP) $(CPPFLAGS) fixedword.cpp -o fixed
 
 d: GenerateTheD.cpp HammingDistance.o pair.o
 	$(CPP) $(CPPFLAGS) GenerateTheD.cpp HammingDistance.o pair.o -o d

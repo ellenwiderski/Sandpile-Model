@@ -5,9 +5,47 @@
 #include <time.h>
 #include <vector>
 #include <stdlib.h>
-#include "HammingDistance.h"
 #include <fstream>
+#include <assert.h>
+#include <algorithm>
 using namespace std;
+
+string lcs(string a, string b) {
+	vector<int> inside (b.size()+1, 0);
+	vector<vector<int>> lengths (a.size()+1, inside);
+
+	for (int i = 0; i < a.size(); i++) {
+		for (int j = 0; j < b.size(); j++) {
+			if (a[i] == b[j]) {
+				lengths[i+1][j+1] = lengths[i][j] + 1;
+			}
+			else {
+				lengths[i+1][j+1] = max(lengths[i+1][j],lengths[i][j+1]);
+			}
+		}
+	}
+
+	string result = "";
+
+	int x = a.size();
+	int y = b.size();
+
+	while (x != 0 && y != 0) {
+		if (lengths[x][y] == lengths[x-1][y]) {
+			x--;
+		}
+		else if (lengths[x][y] == lengths[x][y-1]) {
+			y--;
+		}
+		else {
+			assert(a[x-1] == b[y-1]);
+			result = a[x-1] + result;
+			x--;
+			y--;
+		}
+	}
+	return result;
+}
 
 string B(int n) {
 	string bn = "0";
@@ -33,7 +71,7 @@ string cross(string one,string two) {
 
 pair<string,string> dxd(int maxLength) {
 
-	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength))+4;
+	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength))	+ 4;
 	string bn = B(bnLength);
 
 	string rand1a = bn.substr(rand() % bn.size(), maxLength);
@@ -54,7 +92,6 @@ pair<string,string> dxd(int maxLength) {
 
 int main(int argc, char** argv) {
 	ofstream myfile;
-	myfile.open("out.csv");
 
 	int wordLen;
 	int numTests;
@@ -65,18 +102,20 @@ int main(int argc, char** argv) {
 	cout << "Thanks so much!\nNow enter the number of tests:\n";
 	cin >> numTests;
 
+	myfile.open("lengthOf"+to_string(wordLen)+"Tests"+to_string(numTests)+".csv");
+
 	cout << "Wow, what a great number!\n";
 
-	myfile << "Iteration Number, Distance\n";
+	myfile << "Word Length = ," << wordLen << endl;
 
-	LCS lcs;
+	myfile << "Iteration Number, Word length - subsequence length\n";
 
 	cout << "Calculating distances" << endl;
 
 	for (int i = 0; i < numTests; i++) {
 		pair<string,string> words = dxd(wordLen);
-		string s = lcs.Correspondence(words.first, words.second);
-	    myfile << i+1 << ", " << (wordLen- s.size()) / (double)wordLen << endl;
+		string s = lcs(words.first, words.second);
+	    myfile << i+1 << ", " << wordLen - s.size()<< endl;
 	    if (i % 1 == 0) {
 		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
 		}
