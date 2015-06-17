@@ -5,9 +5,47 @@
 #include <time.h>
 #include <vector>
 #include <stdlib.h>
-#include "HammingDistance.h"
 #include <fstream>
+#include <assert.h>
+#include <algorithm>
 using namespace std;
+
+string lcs(string a, string b) {
+	vector<int> inside (b.size()+1, 0);
+	vector<vector<int>> lengths (a.size()+1, inside);
+
+	for (int i = 0; i < a.size(); i++) {
+		for (int j = 0; j < b.size(); j++) {
+			if (a[i] == b[j]) {
+				lengths[i+1][j+1] = lengths[i][j] + 1;
+			}
+			else {
+				lengths[i+1][j+1] = max(lengths[i+1][j],lengths[i][j+1]);
+			}
+		}
+	}
+
+	string result = "";
+
+	int x = a.size();
+	int y = b.size();
+
+	while (x != 0 && y != 0) {
+		if (lengths[x][y] == lengths[x-1][y]) {
+			x--;
+		}
+		else if (lengths[x][y] == lengths[x][y-1]) {
+			y--;
+		}
+		else {
+			assert(a[x-1] == b[y-1]);
+			result = a[x-1] + result;
+			x--;
+			y--;
+		}
+	}
+	return result;
+}
 
 string B(int n) {
 	string bn = "0";
@@ -31,51 +69,21 @@ string cross(string one,string two) {
 	return newString;
 }
 
-void dxd(int maxLength) {
+string dxd(int maxLength) {
 
-	ofstream dxdfile;
-	dxdfile.open("dxd.txt");
-
-	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength));
+	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength))	+ 4;
 	string bn = B(bnLength);
 
-	map<string,bool> temp;
+	string rand1a = bn.substr(rand() % bn.size(), maxLength);
+	string rand1b = bn.substr(rand() % bn.size(), maxLength);
 
-	int j = 0;
+	string word1 = cross(rand1a,rand1b);
 
-	cout << "Generating all the D's" << endl;
-
-	while (j < bn.size() - maxLength && temp.size() < 2 * maxLength - 1) {
-		string key = bn.substr(j, maxLength);
-		temp[key] = false;
-		j++;
-
-		if (j % 100 == 0)
-			cout << j * 100.0 / (bn.size() - maxLength) << "%" << endl;
-	}
-
-	cout << "Making DxD" << endl;
-
-	int it = 0;
-
-	int size = temp.size();
-	string word;
-
-	for(pair<string,bool> const &s : temp) {
-		for(pair<string,bool> const &t : temp) {
-			word = cross(s.first,t.first);
-			dxdfile << word << endl;
-		}
-		cout << it * 100.0 / size << "%" << endl;
-		it++;
-	}
-	dxdfile.close();
+	return word1;
 }
 
 int main(int argc, char** argv) {
 	ofstream myfile;
-	ifstream dxdfile;
-	myfile.open("out.csv");
 
 	int numTests;
 	string fixedWord;
@@ -90,37 +98,20 @@ int main(int argc, char** argv) {
 
 	cout << "Wow! That's such a great number of tests!\n" << endl;
 
-	myfile << "Word is: " << fixedWord << endl;
-	myfile << "Iteration Number, Distance\n";
+	myfile.open("fixedTest_LengthOf"+to_string(wordLen)+"Tests"+to_string(numTests)+".csv");
 
-	dxd(wordLen);
-	
-	LCS lcs;
-	srand(time(NULL));
-	int rand2;
-	string entry2;
 
-	string line;
+	myfile << "Word = " << fixedWord << endl;
+	myfile << "Word Length = ," << wordLen << endl;
+	myfile << "Iteration Number, Word length - subsequence length\n";
 
 	cout << "Calculating distances" << endl;
 
 	for (int i = 0; i < numTests; i++) {
-		int it = 0;
-		dxdfile.open("dxd.txt");
-		rand2 = rand() % ((2*wordLen-1)*(2*wordLen-1));
-
-		while (getline(dxdfile,line)) {
-			if (it == rand2) {
-				entry2 = line;
-			}
-			it++;
-		}
-	    string s = lcs.Correspondence(fixedWord, entry2);
-	    myfile << i+1 << ", " << (wordLen - s.size()) / (double)(wordLen) << endl;
-	    if (i % 5 == 0) {
-		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
-		}
-		dxdfile.close();
+		string word = dxd(wordLen);
+		string s = lcs(fixedWord, word);
+	    myfile << i+1 << ", " << (wordLen - s.size()) << endl;
+	    cout << (double)(i) * 100.0 / numTests << "%" << endl;
 	}
 
 	myfile.close();
