@@ -10,40 +10,26 @@
 #include <algorithm>
 using namespace std;
 
-string lcs(string a, string b) {
-	vector<int> inside (b.size()+1, 0);
-	vector<vector<int>> lengths (a.size()+1, inside);
+int lcs(string a, string b) {
+	vector<int> old (b.size()+1, 0);
+	vector<int> current (a.size()+1, 0);
 
 	for (int i = 0; i < a.size(); i++) {
 		for (int j = 0; j < b.size(); j++) {
 			if (a[i] == b[j]) {
-				lengths[i+1][j+1] = lengths[i][j] + 1;
+				current[j+1] = old[j] + 1;
 			}
 			else {
-				lengths[i+1][j+1] = max(lengths[i+1][j],lengths[i][j+1]);
+				current[j+1] = max(old[j+1],current[j]);
 			}
 		}
+		old = current;
+		current.assign(a.size(), 0);
 	}
 
-	string result = "";
 
-	int x = a.size();
-	int y = b.size();
-
-	while (x != 0 && y != 0) {
-		if (lengths[x][y] == lengths[x-1][y]) {
-			x--;
-		}
-		else if (lengths[x][y] == lengths[x][y-1]) {
-			y--;
-		}
-		else {
-			assert(a[x-1] == b[y-1]);
-			result = a[x-1] + result;
-			x--;
-			y--;
-		}
-	}
+	int result = current[a.size()];
+	cout << (a.size() - result) << endl;
 	return result;
 }
 
@@ -95,6 +81,8 @@ int main(int argc, char** argv) {
 
 	int wordLen;
 	int numTests;
+	srand(time(NULL));
+
 
 	cout << "Enter a word length:\n";
 	cin >> wordLen;
@@ -114,8 +102,8 @@ int main(int argc, char** argv) {
 
 	for (int i = 0; i < numTests; i++) {
 		pair<string,string> words = dxd(wordLen);
-		string s = lcs(words.first, words.second);
-	    myfile << i+1 << ", " << wordLen - s.size()<< endl;
+		int s = lcs(words.first, words.second);
+	    myfile << i+1 << ", " << wordLen - s<< endl;
 	    if (i % 1 == 0) {
 		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
 		}
