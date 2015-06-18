@@ -10,7 +10,7 @@
 #include <algorithm>
 using namespace std;
 
-int lcs(string a, string b, int c) {
+int lcs(string a, string b) {
 	vector<int> old (b.size()+1, 0);
 	vector<int> current (a.size()+1, 0);
 
@@ -29,7 +29,6 @@ int lcs(string a, string b, int c) {
 
 
 	int result = current[a.size()];
-	cout << result << endl;
 	cout << (a.size() - result) << endl;
 	return result;
 }
@@ -82,6 +81,8 @@ int main(int argc, char** argv) {
 
 	int wordLen;
 	int numTests;
+	srand(time(NULL));
+
 
 	cout << "Enter a word length:\n";
 	cin >> wordLen;
@@ -101,7 +102,7 @@ int main(int argc, char** argv) {
 
 	for (int i = 0; i < numTests; i++) {
 		pair<string,string> words = dxd(wordLen);
-		int s = lcs(words.first, words.second, wordLen);
+		int s = lcs(words.first, words.second);
 	    myfile << i+1 << ", " << wordLen - s<< endl;
 	    if (i % 1 == 0) {
 		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
