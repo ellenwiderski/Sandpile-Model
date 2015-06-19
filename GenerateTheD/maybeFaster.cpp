@@ -11,6 +11,7 @@
 using namespace std;
 
 int lcs(string a, string b) {
+	cout << a.size() << "x" << b.size() << "___";
 	vector<int> old (b.size()+1, 0);
 	vector<int> current (a.size()+1, 0);
 
@@ -29,7 +30,6 @@ int lcs(string a, string b) {
 
 
 	int result = current[a.size()];
-	cout << (a.size() - result) << endl;
 	return result;
 }
 
@@ -60,13 +60,13 @@ pair<string,string> dxd(int maxLength) {
 	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength))	+ 4;
 	string bn = B(bnLength);
 
-	string rand1a = bn.substr(rand() % bn.size(), maxLength);
-	string rand1b = bn.substr(rand() % bn.size(), maxLength);
+	string rand1a = bn.substr(rand() % (bn.size() - maxLength), maxLength);
+	string rand1b = bn.substr(rand() % (bn.size() - maxLength), maxLength);
 
 	string word1 = cross(rand1a,rand1b);
 
-	string rand2a = bn.substr(rand() % bn.size(), maxLength);
-	string rand2b = bn.substr(rand() % bn.size(), maxLength);
+	string rand2a = bn.substr(rand() % (bn.size() - maxLength), maxLength);
+	string rand2b = bn.substr(rand() % (bn.size() - maxLength), maxLength);
 
 	string word2 = cross(rand2a,rand2b);
 
@@ -79,34 +79,20 @@ pair<string,string> dxd(int maxLength) {
 int main(int argc, char** argv) {
 	ofstream myfile;
 
-	int wordLen;
-	int numTests;
+	int wordLen = 1000000;
+	int numTests = 333;
 	srand(time(NULL));
 
-
-	cout << "Enter a word length:\n";
-	cin >> wordLen;
-
-	cout << "Thanks so much!\nNow enter the number of tests:\n";
-	cin >> numTests;
-
 	myfile.open("lengthOf"+to_string(wordLen)+"Tests"+to_string(numTests)+".csv");
-
-	cout << "Wow, what a great number!\n";
 
 	myfile << "Word Length = ," << wordLen << endl;
 
 	myfile << "Iteration Number, Word length - subsequence length\n";
 
-	cout << "Calculating distances" << endl;
-
 	for (int i = 0; i < numTests; i++) {
 		pair<string,string> words = dxd(wordLen);
 		int s = lcs(words.first, words.second);
-	    myfile << i+1 << ", " << wordLen - s<< endl;
-	    if (i % 1 == 0) {
-		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
-		}
+		myfile << i+1 << ", " <<wordLen - s<< endl;
 	}
 
 	myfile.close();
