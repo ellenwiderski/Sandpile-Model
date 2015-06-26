@@ -1,0 +1,12 @@
+#!/bin/sh
+number=$1
+
+for i in `seq 0 $1`;
+do
+	echo 'iteration'$i
+	mkdir 'iteration'$i
+	cp 'fast' 'iteration'$i
+	cd 'iteration'$i
+	'screen' '-d' '-m' './fast'
+	cd '..'
+done 
