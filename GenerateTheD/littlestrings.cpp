@@ -5,10 +5,9 @@
 #include <vector>
 #include <stdlib.h>
 #include <fstream>
-#include <assert.h>
 using namespace std;
 
-int kirbylcs(string a, string b) {
+int lcs(string a, string b) {
 	vector<int> old (b.size()+1, 0);
 	vector<int> current (a.size()+1, 0);
 
@@ -31,43 +30,6 @@ int kirbylcs(string a, string b) {
 	return result;
 }
 
-int lcs(string a, string b) {
-	vector<int> inside (b.size()+1, 0);
-	vector<vector<int>> lengths (a.size()+1, inside);
-
-	for (int i = 0; i < a.size(); i++) {
-		for (int j = 0; j < b.size(); j++) {
-			if (a[i] == b[j]) {
-				lengths[i+1][j+1] = lengths[i][j] + 1;
-			}
-			else {
-				lengths[i+1][j+1] = max(lengths[i+1][j],lengths[i][j+1]);
-			}
-		}
-	}
-
-	int result = 0;
-
-	int x = a.size();
-	int y = b.size();
-
-	while (x != 0 && y != 0) {
-		if (lengths[x][y] == lengths[x-1][y]) {
-			x--;
-		}
-		else if (lengths[x][y] == lengths[x][y-1]) {
-			y--;
-		}
-		else {
-			assert(a[x-1] == b[y-1]);
-			result++;
-			x--;
-			y--;
-		}
-	}
-	return result;
-}
-
 string B(int n) {
 	string bn = "0";
 
@@ -76,6 +38,23 @@ string B(int n) {
 	}
 
 	return bn;
+}
+
+void splitLCS(string a, string b) {
+	string aa = a.substr(0, a.size()/2);
+	string ab = a.substr(a.size()/2, a.size()-1);
+
+	string ba = b.substr(0, b.size()/2);
+	string bb = b.substr(b.size()/2,b.size()-1);
+
+	int comp1 = lcs(aa,ba);
+	int comp2 = lcs(ab,bb);
+
+	cout << "Distance between original strings: " << lcs(a,b) << endl;
+	cout << "Distance between first substrings: " << comp1 << endl;
+	cout << "Distance between second substrings: " << comp2 << endl;
+	cout << "Addition: " << comp1 + comp2 << endl << endl;
+
 }
 
 string cross(string one,string two) {
@@ -95,13 +74,13 @@ pair<string,string> dxd(int maxLength) {
 	int bnLength = ceil(0.5529610484 + 0.9220896727*log(maxLength))	+ 4;
 	string bn = B(bnLength);
 
-	string rand1a = bn.substr(rand() % (bn.size()-maxLength+1), maxLength);
-	string rand1b = bn.substr(rand() % (bn.size()-maxLength+1), maxLength);
+	string rand1a = bn.substr(rand() % bn.size(), maxLength);
+	string rand1b = bn.substr(rand() % bn.size(), maxLength);
 
 	string word1 = cross(rand1a,rand1b);
 
-	string rand2a = bn.substr(rand() % (bn.size()-maxLength+1), maxLength);
-	string rand2b = bn.substr(rand() % (bn.size()-maxLength+1), maxLength);
+	string rand2a = bn.substr(rand() % bn.size(), maxLength);
+	string rand2b = bn.substr(rand() % bn.size(), maxLength);
 
 	string word2 = cross(rand2a,rand2b);
 
@@ -124,26 +103,27 @@ int main(int argc, char** argv) {
 	cout << "Thanks so much!\nNow enter the number of tests:\n";
 	cin >> numTests;
 
-	myfile.open("lengthOf"+to_string(wordLen)+"Tests"+to_string(numTests)+".csv");
+	//myfile.open("lengthOf"+to_string(wordLen)+"Tests"+to_string(numTests)+".csv");
 
 	cout << "Wow, what a great number!\n";
 
-	myfile << "Word Length = ," << wordLen << endl;
+	//myfile << "Word Length = ," << wordLen << endl;
 
-	myfile << "Iteration Number, Word length - subsequence length\n";
+	//myfile << "Iteration Number, Word length - subsequence length\n";
 
 	cout << "Calculating distances" << endl;
 
 	for (int i = 0; i < numTests; i++) {
 		pair<string,string> words = dxd(wordLen);
-		int s = lcs(words.first, words.second);
-	    myfile << i+1 << ", " << wordLen - s<< endl;
-	    if (i % 1 == 0) {
-		    cout << (double)(i) * 100.0 / numTests << "%" << endl;
-		}
+		splitLCS(words.first,words.second);
+		//int s = lcs(words.first, words.second);
+	    //myfile << i+1 << ", " << wordLen - s<< endl;
+	    //if (i % 1 == 0) {
+		//    cout << (double)(i) * 100.0 / numTests << "%" << endl;
+		//}
 
 	}
 
-	myfile.close();
+	//myfile.close();
 	return 0;
 }

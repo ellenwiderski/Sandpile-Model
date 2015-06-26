@@ -8,6 +8,9 @@ CPPFLAGS = -std=c++11 -g
 fast: maybeFaster.cpp
 	$(CPP) $(CPPFLAGS) maybeFaster.cpp -o fast
 
+lil: littlestrings.cpp
+	$(CPP) $(CPPFLAGS) littlestrings.cpp -o lil
+
 fixed: fixedword.cpp
 	$(CPP) $(CPPFLAGS) fixedword.cpp -o fixed
 
